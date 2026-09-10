@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
-import sys
+import re
 
 PROG_NAME = "Syntactic Analyzer"
 VERSION = "1.0"
@@ -10,26 +10,36 @@ TAGS = "syntactic,python"
 INFO = "macos"
 
 
-def parse_arguments():
+def main():
+    # Parse command line arguments.
     arg_parser = argparse.ArgumentParser(
-        prog="Syntactic Analyzer",
+        prog=PROG_NAME,
         description="An analyzer for syntactic analysis.",
         add_help=True,
     )
     arg_parser.add_argument("commands", help="Either 'info' or a method")
     args = arg_parser.parse_args()
-    return args
 
-
-def main():
-    args = parse_arguments()
+    # If 'info' is given, then just print analyzer info and exit.
     if args.commands == "info":
         print(PROG_NAME)
         print(VERSION)
         print(GROUP_NAME)
         print(TAGS)
         print(INFO)
-        sys.exit(0)
+        return
+
+    target = {"class": "", "method": "", "args": ""}
+
+    match = re.match(r"(.*)\.(.*):(.*)", args.commands)
+
+    if match is None:
+        arg_parser.error(
+            f"Invalid method '{args.commands}'. "
+            + "Correct format: jpamb.cases.Simple.divideByZero:()I"
+        )
+
+    target["class"], target["method"], target["args"] = match.groups()
 
     # Make predictions (improve these by looking at the Java code!)
     ok_chance = "yes"
