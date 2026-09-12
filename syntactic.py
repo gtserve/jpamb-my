@@ -24,6 +24,11 @@ OUTCOMES = (
 )
 
 
+def blind_guess() -> dict[str, str]:
+    """Blind guess. Inadequate analysis to make a justified bet."""
+    return dict.fromkeys(OUTCOMES, "50%")
+
+
 def parse_target(command: str) -> tuple[str, str]:
     """Return the Java class and method name from a JPAMB method identifier."""
     match = re.fullmatch(r"(?P<class>.+)\.(?P<method>[^.:]+):.+", command)
@@ -57,7 +62,7 @@ def analyze(command: str) -> dict[str, str]:
         source = source_file.read_bytes()
     except OSError as error:
         print(f"Could not read {source_file}: {error}", file=sys.stderr)
-        return dict.fromkeys(OUTCOMES, "50%")
+        return blind_guess()
 
     # Initialize Tree-sitter object.
     language = tree_sitter.Language(tree_sitter_java.language())
@@ -80,7 +85,7 @@ def analyze(command: str) -> dict[str, str]:
 
     if len(captures['method-name']) != 1:
         print(f"Expected exactly one method name: {captures['method-name']}", file=sys.stderr)
-        return dict.fromkeys(OUTCOMES, "50%")
+        return blind_guess()
 
     method_type = captures['method-type'][0].text.decode('utf-8')
     method_name = captures['method-name'][0].text.decode('utf-8')
@@ -99,8 +104,7 @@ def analyze(command: str) -> dict[str, str]:
         predictions["assertion error"] = "100%"
         return predictions
 
-    # Blind guess. Inadequate analysis to make a justified bet.
-    return dict.fromkeys(OUTCOMES, "50%")
+    return blind_guess()
 
 
 def main():
