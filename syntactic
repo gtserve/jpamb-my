@@ -1,0 +1,286 @@
+#!/usr/bin/env python3
+
+import argparse
+import re
+import sys
+from pathlib import Path
+
+import tree_sitter
+import tree_sitter_java
+
+PROG_NAME = "Syntactic Analyzer"
+VERSION = "1.0"
+GROUP_NAME = "My Group"
+TAGS = "syntactic,python"
+INFO = "macos"
+
+OUTCOMES = (
+    "ok",
+    "divide by zero",
+    "assertion error",
+    "out of bounds",
+    "null pointer",
+    "*",
+)
+
+TS_JAVA_LANGUAGE = tree_sitter.Language(tree_sitter_java.language())
+
+
+# A class to hold relevant info on a given method.
+class MethodContext:
+    type: str
+    name: str
+    body: tree_sitter.Node
+
+    def __init__(self, type: str, name: str, body: tree_sitter.Node):
+        self.type = type
+        self.name = name
+        self.body = body
+        pass
+
+    def name(self) -> str:
+        return self.name
+
+    def body(self) -> tree_sitter.Node:
+        return self.body
+
+class SyntacticAnalyzer:
+
+    def __init__(self, context: MethodContext):
+        self.context = context
+        self.predictions = blind_guess()
+        pass
+
+    def predictions(self) -> dict[str, str]:
+        return self.predictions
+
+    def analyze(self) -> None:
+        self.expression(self.context.body)
+        return
+
+    def expression(self, node: tree_sitter.Node):
+        return
+
+
+def blind_guess() -> dict[str, str]:
+    """Blind guess. Inadequate analysis to make a justified bet."""
+    return dict.fromkeys(OUTCOMES, "50%")
+
+
+def parse_target(command: str) -> tuple[str, str]:
+    """Return the Java class and method name from a JPAMB method identifier."""
+    match = re.fullmatch(r"(?P<class>.+)\.(?P<method>[^.:]+):.+", command)
+    if match is None:
+        raise ValueError(
+            "Correct format: jpamb.cases.Simple.divideByZero:()I"
+        )
+    return match["class"], match["method"]
+
+
+def query_captures(query: str, context: MethodContext) -> dict[str, list]:
+    """Get captures/results of a tree-sitter query."""
+    q = tree_sitter.Query(TS_JAVA_LANGUAGE, query)
+    return tree_sitter.QueryCursor(q).captures(context.body)
+
+
+def init_context(command: str) -> MethodContext:
+    class_name, method_name = parse_target(command)
+
+    # Read Java file.
+    source_file = Path("cases", *class_name.split(".")).with_suffix(".java")
+    try:
+        source = source_file.read_bytes()
+    except OSError as error:
+        print(f"Could not read {source_file}: {error}", file=sys.stderr)
+        return blind_guess()
+
+    # Initialize Tree-sitter object.
+    parser = tree_sitter.Parser(TS_JAVA_LANGUAGE)
+    tree = parser.parse(source)
+
+    # Find target method in syntax tree.
+    query = tree_sitter.Query(
+        TS_JAVA_LANGUAGE,
+        f"""
+        (method_declaration
+            type: (_) @method-type
+            name: ((identifier) @method-name (#eq? @method-name "{method_name}"))
+            body: (block) @method-body
+        )
+        """
+    )
+    query_cursor = tree_sitter.QueryCursor(query)
+    captures = query_cursor.captures(tree.root_node)
+
+    if len(captures['method-name']) != 1:
+        print(f"Expected exactly one method name: {captures['method-name']}", file=sys.stderr)
+        return blind_guess()
+
+    context = MethodContext(
+        type=captures['method-type'][0].text.decode('utf-8'),
+        name=captures['method-name'][0].text.decode('utf-8'),
+        body=captures['method-body'][0]
+    )
+
+    # DEBUG
+    print("-" * 50, file=sys.stderr)
+    print(f"Method: {context.type} {context.name}", file=sys.stderr)
+    print("-" * 50, file=sys.stderr)
+    print(context.body, file=sys.stderr)
+
+    return context
+
+
+def analyze(current_expr: tree_sitter.Node, predictions: dict[str, str]) -> dict[str, str]:
+    """Recursively analyze context and calculate predictions."""
+
+    if (current_expr.type == "block") and len(current_expr.named_children) == 0:
+        # Trivial: (block)
+        predictions['ok'] = "100%"
+        predictions['divide by zero'] = "0%"
+        predictions['assertion error'] = "0%"
+        predictions['out of bounds'] = "0%"
+        predictions['null pointer'] = "0%"
+        predictions['*'] = "0%"
+        return predictions
+
+    if len(current_expr.named_children) == 1:
+        # (block (_))
+        if current_expr.named_children[0].type == "assert_statement":
+            # (assert_statement (_))
+            assert_statement = current_expr.named_children[0]
+            if len(assert_statement.named_children) == 1:
+                if assert_statement.named_children[0].type == "false":
+                    # Trivial: (assert_statement (false))
+                    predictions['ok'] = "0%"
+                    predictions['divide by zero'] = "0%"
+                    predictions['assertion error'] = "100%"
+                    predictions['out of bounds'] = "0%"
+                    predictions['null pointer'] = "0%"
+                    predictions['*'] = "0%"
+                    return predictions
+                if assert_statement.named_children[0].type == "true":
+                    # Trivial: (assert_statement (true))
+                    predictions['ok'] = "100%"
+                    predictions['divide by zero'] = "0%"
+                    predictions['assertion error'] = "0%"
+                    predictions['out of bounds'] = "0%"
+                    predictions['null pointer'] = "0%"
+                    predictions['*'] = "0%"
+                    return predictions
+                if assert_statement.named_children[0].type == "identifier":
+                    # Trivial: (assert_statement (identifier))
+                    predictions['ok'] = "assert-is-true"
+                    predictions['divide by zero'] = "0%"
+                    predictions['assertion error'] = "assert-is-false"
+                    predictions['out of bounds'] = "0%"
+                    predictions['null pointer'] = "0%"
+                    predictions['*'] = "0%"
+                    return predictions
+                if assert_statement.named_children[0].type == "binary_expression":
+                    # (assert_statement (binary_expression left: (_) right: (_)))
+                    binary_expression = assert_statement.named_children[0]
+                    operator = binary_expression.named_children[1].text.decode('utf-8')
+                    if operator not in ["/", "%"]:
+                        predictions['ok'] = "assert-is-true"
+                        predictions['divide by zero'] = "0%"
+                        predictions['assertion error'] = "assert-is-false"
+                        predictions['out of bounds'] = "0%"
+                        predictions['null pointer'] = "0%"
+                        predictions['*'] = "0%"
+                        return predictions
+
+        if current_expr.named_children[0].type == "return_statement":
+            # (return_statement (_))
+            return_statement = current_expr.named_children[0]
+
+            if len(return_statement.named_children) == 0:
+                # Trivial: (return_statement)
+                predictions['ok'] = "100%"
+                predictions['divide by zero'] = "0%"
+                predictions['assertion error'] = "0%"
+                predictions['out of bounds'] = "0%"
+                predictions['null pointer'] = "0%"
+                predictions['*'] = "0%"
+                return predictions
+
+            if len(return_statement.named_children) == 1:
+
+                if "literal" in return_statement.named_children[0].type:
+                    # (return_statement (*_literal)
+                    predictions['ok'] = "100%"
+                    predictions['divide by zero'] = "0%"
+                    predictions['assertion error'] = "0%"
+                    predictions['out of bounds'] = "0%"
+                    predictions['null pointer'] = "0%"
+                    predictions['*'] = "0%"
+                    return predictions
+
+                if return_statement.named_children[0].type == "binary_expression":
+                    # (binary_expression left: (_) right: (_))
+                    binary_expression = return_statement.named_children[0]
+                    operator = binary_expression.children[1].text.decode('utf-8')
+                    if operator not in ["/", "%"]:
+                        # Trivial: return <non-div-bin-expression>;
+                        predictions['ok'] = "100%"
+                        predictions['divide by zero'] = "0%"
+                        predictions['assertion error'] = "0%"
+                        predictions['out of bounds'] = "0%"
+                        predictions['null pointer'] = "0%"
+                        predictions['*'] = "0%"
+                        return predictions
+
+                    if operator in ["/", "%"]:
+                        right_expression = binary_expression.children[2]
+                        if right_expression.text.decode('utf-8') == "0":
+                            # Trivial: return <?> / 0;
+                            predictions['ok'] = "0%"
+                            predictions['divide by zero'] = "100%"
+                            predictions['assertion error'] = "0%"
+                            predictions['out of bounds'] = "0%"
+                            predictions['null pointer'] = "0%"
+                            predictions['*'] = "0%"
+                            return predictions
+
+                        if right_expression.type == "identifier":
+                            # Trivial: return <?> / <I>;
+                            predictions['ok'] = "right-id-non-zero"
+                            predictions['divide by zero'] = "right-id-zero"
+                            predictions['assertion error'] = "0%"
+                            predictions['out of bounds'] = "0%"
+                            predictions['null pointer'] = "0%"
+                            predictions['*'] = "0%"
+                            return predictions
+
+    # Resort to blind guess if everything else fails.
+    return blind_guess()
+
+
+def main():
+    # Parse command line arguments.
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("command", help="Either 'info' or a method name.")
+    args = arg_parser.parse_args()
+
+    # If 'info' is given, then just print analyzer info and exit.
+    if args.command == "info":
+        print(PROG_NAME)
+        print(VERSION)
+        print(GROUP_NAME)
+        print(TAGS)
+        print(INFO)
+        return
+
+    context = init_context(args.command)
+
+    # Analyze method.
+    analyzer = SyntacticAnalyzer(context)
+    analyzer.analyze()
+
+    # Print final predictions.
+    for outcome in OUTCOMES:
+        print(f"{outcome};{analyzer.predictions[outcome]}")
+
+
+if __name__ == "__main__":
+    main()
