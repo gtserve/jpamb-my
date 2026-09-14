@@ -1,0 +1,2318 @@
+(analysis-summary
+  :config (analysis-config
+    :cmd (./syntactic.py)
+    :analysis (analysis-info
+      :name "Syntactic Analyzer"
+      :version 1.0
+      :group "My Group"
+      :tags (syntactic python)
+      :system macos
+    )
+    :experiments (
+      :"jpamb.cases.Arrays.arrayContent:()V" ("assertion error")
+      :"jpamb.cases.Arrays.arrayInBounds:()V" (ok)
+      :"jpamb.cases.Arrays.arrayIsNull:()V" ("null pointer")
+      :"jpamb.cases.Arrays.arrayIsNullLength:()V" ("null pointer")
+      :"jpamb.cases.Arrays.arrayLength:()V" (ok)
+      :"jpamb.cases.Arrays.arrayNotEmpty:([I)V" ("assertion error" ok)
+      :"jpamb.cases.Arrays.arrayOutOfBounds:()V" ("out of bounds")
+      :"jpamb.cases.Arrays.arraySometimesNull:(I)V" ("out of bounds" "null pointer")
+      :"jpamb.cases.Arrays.arraySpellsHello:([C)V" ("assertion error" "out of bounds" ok)
+      :"jpamb.cases.Arrays.arraySumIsLarge:([I)V" ("assertion error" ok)
+      :"jpamb.cases.Arrays.binarySearch:(I)V" ("assertion error" ok)
+      :"jpamb.cases.Calls.allPrimesArePositive:(I)V" ("out of bounds" ok "assertion error")
+      :"jpamb.cases.Calls.callsAssertFalse:()V" ("assertion error")
+      :"jpamb.cases.Calls.callsAssertFib:(I)V" (ok "assertion error")
+      :"jpamb.cases.Calls.callsAssertIf:(Z)V" (ok "assertion error")
+      :"jpamb.cases.Calls.callsAssertIfWithTrue:()V" (ok)
+      :"jpamb.cases.Calls.callsAssertTrue:()V" (ok)
+      :"jpamb.cases.Dependent.badNormalizedDistance:(II)I" ("divide by zero" ok)
+      :"jpamb.cases.Dependent.divisionLoop:(I)V" (ok)
+      :"jpamb.cases.Dependent.normalizedDistance:(II)I" (ok)
+      :"jpamb.cases.Dependent.safeDivByN:(I)I" (ok)
+      :"jpamb.cases.Loops.forever:()V" (*)
+      :"jpamb.cases.Loops.neverAsserts:()V" (*)
+      :"jpamb.cases.Loops.neverDivides:()I" (*)
+      :"jpamb.cases.Loops.terminates:()V" ("assertion error")
+      :"jpamb.cases.Simple.assertBoolean:(Z)V" (ok "assertion error")
+      :"jpamb.cases.Simple.assertFalse:()V" ("assertion error")
+      :"jpamb.cases.Simple.assertInteger:(I)V" (ok "assertion error")
+      :"jpamb.cases.Simple.assertPositive:(I)V" (ok "assertion error")
+      :"jpamb.cases.Simple.assertTrue:()V" (ok)
+      :"jpamb.cases.Simple.checkBeforeAssert:(I)V" (ok "assertion error")
+      :"jpamb.cases.Simple.checkBeforeDivideByN:(I)I" (ok "assertion error")
+      :"jpamb.cases.Simple.checkBeforeDivideByN2:(I)I" (ok)
+      :"jpamb.cases.Simple.divideByN:(I)I" ("divide by zero" ok)
+      :"jpamb.cases.Simple.divideByNMinus10054203:(I)I" ("divide by zero" ok)
+      :"jpamb.cases.Simple.divideByZero:()I" ("divide by zero")
+      :"jpamb.cases.Simple.divideZeroByZero:(II)I" ("divide by zero" ok)
+      :"jpamb.cases.Simple.doNothing:()V" (ok)
+      :"jpamb.cases.Simple.earlyReturn:()I" (ok)
+      :"jpamb.cases.Simple.justAdd:(II)I" (ok)
+      :"jpamb.cases.Simple.justMulitply:(II)I" (ok)
+      :"jpamb.cases.Simple.justReturn:()I" (ok)
+      :"jpamb.cases.Simple.justReturnNothing:()V" (ok)
+      :"jpamb.cases.Simple.multiError:(Z)I" ("divide by zero" "assertion error")
+      :"jpamb.cases.Strings.sayHello:(Ljava/lang/String;)V" ("assertion error" ok)
+      :"jpamb.cases.Tricky.collatz:(I)V" (ok "assertion error")
+    )
+    :iterations 3
+    :timeout 5.0
+  )
+  :results (
+    :"jpamb.cases.Arrays.arrayContent:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26454166
+          :relative 1.0370665596130386
+        )
+        :calibrates (2550250 2307750)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26896083
+          :relative 1.0526522990264164
+        )
+        :calibrates (2467667 2297375)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26599000
+          :relative 1.0555179772384888
+        )
+        :calibrates (2386625 2294792)
+      ))
+    :"jpamb.cases.Arrays.arrayInBounds:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26873875
+          :relative 1.0524493447583052
+        )
+        :calibrates (2456000 2307333)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26899709
+          :relative 1.0584026911091486
+        )
+        :calibrates (2414791 2288208)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26676292
+          :relative 1.0512015101968641
+        )
+        :calibrates (2445875 2296042)
+      ))
+    :"jpamb.cases.Arrays.arrayIsNull:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26950583
+          :relative 1.0495810433090111
+        )
+        :calibrates (2484083 2324500)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26851167
+          :relative 1.0526333523313252
+        )
+        :calibrates (2441042 2316250)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26641625
+          :relative 1.0496114709325222
+        )
+        :calibrates (2436000 2317125)
+      ))
+    :"jpamb.cases.Arrays.arrayIsNullLength:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26974041
+          :relative 1.05246480484077
+        )
+        :calibrates (2448458 2332459)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26921709
+          :relative 1.0538375418937262
+        )
+        :calibrates (2449875 2306708)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26622375
+          :relative 1.050010006608384
+        )
+        :calibrates (2441334 2304000)
+      ))
+    :"jpamb.cases.Arrays.arrayLength:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26174792
+          :relative 1.0411049658119145
+        )
+        :calibrates (2450916 2311291)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26836042
+          :relative 1.0395191429856534
+        )
+        :calibrates (2472500 2427875)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26754667
+          :relative 1.0421955871352315
+        )
+        :calibrates (2448083 2407417)
+      ))
+    :"jpamb.cases.Arrays.arrayNotEmpty:([I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26717791
+          :relative 1.0362628434841947
+        )
+        :calibrates (2485917 2429583)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26544792
+          :relative 1.0448211676100136
+        )
+        :calibrates (2455042 2333333)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26413042
+          :relative 1.0442048669014097
+        )
+        :calibrates (2442250 2329125)
+      ))
+    :"jpamb.cases.Arrays.arrayOutOfBounds:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26217375
+          :relative 1.023597881981859
+        )
+        :calibrates (2450042 2516125)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26308583
+          :relative 1.0442357587949385
+        )
+        :calibrates (2426875 2325292)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26153041
+          :relative 1.031860163360562
+        )
+        :calibrates (2445708 2414916)
+      ))
+    :"jpamb.cases.Arrays.arraySometimesNull:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26512917
+          :relative 1.0514896531122273
+        )
+        :calibrates (2369667 2340083)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26838959
+          :relative 1.044924100459859
+        )
+        :calibrates (2498292 2342000)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26845458
+          :relative 1.0440211074354897
+        )
+        :calibrates (2430208 2421333)
+      ))
+    :"jpamb.cases.Arrays.arraySpellsHello:([C)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26164167
+          :relative 1.049850350325467
+        )
+        :calibrates (2350083 2315292)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26420333
+          :relative 1.0516797053726408
+        )
+        :calibrates (2374416 2316834)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26460083
+          :relative 1.049824877881175
+        )
+        :calibrates (2414167 2304250)
+      ))
+    :"jpamb.cases.Arrays.arraySumIsLarge:([I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26549125
+          :relative 1.0356529775160543
+        )
+        :calibrates (2451250 2440083)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26554750
+          :relative 1.0511534832859897
+        )
+        :calibrates (2423250 2297584)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26782333
+          :relative 1.0463685262858546
+        )
+        :calibrates (2459667 2354375)
+      ))
+    :"jpamb.cases.Arrays.binarySearch:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26430916
+          :relative 1.046079195911552
+        )
+        :calibrates (2459792 2294250)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26717209
+          :relative 1.032970993968139
+        )
+        :calibrates (2488000 2464792)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26688875
+          :relative 1.0504915083021562
+        )
+        :calibrates (2440916 2311000)
+      ))
+    :"jpamb.cases.Calls.allPrimesArePositive:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26625792
+          :relative 1.0492505154865905
+        )
+        :calibrates (2446333 2307917)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26736250
+          :relative 1.0406015279319687
+        )
+        :calibrates (2460167 2409833)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26756042
+          :relative 1.0521546038513734
+        )
+        :calibrates (2449500 2296167)
+      ))
+    :"jpamb.cases.Calls.callsAssertFalse:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26674375
+          :relative 1.0509337970728292
+        )
+        :calibrates (2450417 2294083)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26714916
+          :relative 1.0529417662494802
+        )
+        :calibrates (2427250 2302542)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26883500
+          :relative 1.0554749238711576
+        )
+        :calibrates (2422250 2309708)
+      ))
+    :"jpamb.cases.Calls.callsAssertFib:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26537167
+          :relative 1.0485110679453102
+        )
+        :calibrates (2449625 2296875)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26861833
+          :relative 1.0552700696772197
+        )
+        :calibrates (2433875 2296500)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26486333
+          :relative 1.0485522964951484
+        )
+        :calibrates (2427458 2309500)
+      ))
+    :"jpamb.cases.Calls.callsAssertIf:(Z)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26504208
+          :relative 1.046859511826764
+        )
+        :calibrates (2435000 2323667)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26487083
+          :relative 1.046959185033316
+        )
+        :calibrates (2456542 2297959)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26620417
+          :relative 1.0426163186375212
+        )
+        :calibrates (2404291 2422167)
+      ))
+    :"jpamb.cases.Calls.callsAssertIfWithTrue:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26368167
+          :relative 1.0319618971640165
+        )
+        :calibrates (2436833 2462625)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26300292
+          :relative 1.0377032905641297
+        )
+        :calibrates (2487833 2334834)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26492583
+          :relative 1.0451013479100086
+        )
+        :calibrates (2444792 2331083)
+      ))
+    :"jpamb.cases.Calls.callsAssertTrue:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 25994958
+          :relative 1.0316049230417266
+        )
+        :calibrates (2436542 2397542)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26305958
+          :relative 1.0414556564152713
+        )
+        :calibrates (2443333 2338875)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26266250
+          :relative 1.039371627235685
+        )
+        :calibrates (2443833 2354125)
+      ))
+    :"jpamb.cases.Dependent.badNormalizedDistance:(II)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26602417
+          :relative 1.0455135001697686
+        )
+        :calibrates (2438542 2352584)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26641292
+          :relative 1.0520150194228464
+        )
+        :calibrates (2300167 2426666)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26399458
+          :relative 1.0587121667120956
+        )
+        :calibrates (2297500 2314750)
+      ))
+    :"jpamb.cases.Dependent.divisionLoop:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26439375
+          :relative 1.0424283577528386
+        )
+        :calibrates (2488667 2307042)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26420792
+          :relative 1.0408721060942099
+        )
+        :calibrates (2454708 2354834)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26590917
+          :relative 1.0507032474524687
+        )
+        :calibrates (2429125 2303042)
+      ))
+    :"jpamb.cases.Dependent.normalizedDistance:(II)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26470666
+          :relative 1.04308931521305
+        )
+        :calibrates (2482458 2311625)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26286417
+          :relative 1.0415644201588525
+        )
+        :calibrates (2451042 2326417)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26630042
+          :relative 1.0503410309843668
+        )
+        :calibrates (2435250 2307834)
+      ))
+    :"jpamb.cases.Dependent.safeDivByN:(I)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26451375
+          :relative 1.0455673045138496
+        )
+        :calibrates (2453000 2310333)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26620291
+          :relative 1.0560201413605264
+        )
+        :calibrates (2384000 2295750)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26731917
+          :relative 1.0528701031116567
+        )
+        :calibrates (2441500 2292083)
+      ))
+    :"jpamb.cases.Loops.forever:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26686084
+          :relative 1.0518496924585374
+        )
+        :calibrates (2443375 2293208)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26627834
+          :relative 1.0528841394529354
+        )
+        :calibrates (2431875 2283125)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26747459
+          :relative 1.0448039574583277
+        )
+        :calibrates (2478542 2346583)
+      ))
+    :"jpamb.cases.Loops.neverAsserts:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26217458
+          :relative 1.0387112489189674
+        )
+        :calibrates (2477583 2318750)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26353958
+          :relative 1.041914493841717
+        )
+        :calibrates (2473500 2312375)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26629375
+          :relative 1.0454250531952998
+        )
+        :calibrates (2480375 2316583)
+      ))
+    :"jpamb.cases.Loops.neverDivides:()I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26438334
+          :relative 1.0386543246615139
+        )
+        :calibrates (2430959 2406416)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26494167
+          :relative 1.041490089618586
+        )
+        :calibrates (2432208 2383833)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26476333
+          :relative 1.0418969965382354
+        )
+        :calibrates (2490917 2317375)
+      ))
+    :"jpamb.cases.Loops.terminates:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26303958
+          :relative 1.042593451674722
+        )
+        :calibrates (2430250 2339083)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26198917
+          :relative 1.033791754094308
+        )
+        :calibrates (2481042 2366500)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26380750
+          :relative 1.0443567765192314
+        )
+        :calibrates (2439875 2324000)
+      ))
+    :"jpamb.cases.Simple.assertBoolean:(Z)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26309667
+          :relative 1.040462446248886
+        )
+        :calibrates (2354625 2439208)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26391625
+          :relative 1.0532722534009662
+        )
+        :calibrates (2349625 2319375)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26425084
+          :relative 1.0425144280085272
+        )
+        :calibrates (2434292 2357875)
+      ))
+    :"jpamb.cases.Simple.assertFalse:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -inf
+            :"divide by zero" -inf
+            :"assertion error" inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26539625
+          :relative 1.049952644410125
+        )
+        :calibrates (2435834 2295375)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -inf
+            :"divide by zero" -inf
+            :"assertion error" inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26256000
+          :relative 1.0571114533480643
+        )
+        :calibrates (2283000 2321125)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -inf
+            :"divide by zero" -inf
+            :"assertion error" inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26619834
+          :relative 1.0473832182257063
+        )
+        :calibrates (2456167 2317500)
+      ))
+    :"jpamb.cases.Simple.assertInteger:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26498416
+          :relative 1.0467760026381858
+        )
+        :calibrates (2474917 2283625)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26532375
+          :relative 1.050871760902439
+        )
+        :calibrates (2409042 2310875)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26463417
+          :relative 1.0458788641523795
+        )
+        :calibrates (2457459 2304625)
+      ))
+    :"jpamb.cases.Simple.assertPositive:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26451625
+          :relative 1.0438349113443577
+        )
+        :calibrates (2477084 2305333)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26559583
+          :relative 1.0470592129149767
+        )
+        :calibrates (2439500 2326917)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok assert-is-true
+            :"divide by zero" -inf
+            :"assertion error" assert-is-false
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26468708
+          :relative 1.0470919871267823
+        )
+        :calibrates (2443416 2306334)
+      ))
+    :"jpamb.cases.Simple.assertTrue:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26733667
+          :relative 1.0516388335327724
+        )
+        :calibrates (2435417 2311916)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26631625
+          :relative 1.0527233947890486
+        )
+        :calibrates (2403375 2314042)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26561166
+          :relative 1.046197628117392
+        )
+        :calibrates (2492375 2283792)
+      ))
+    :"jpamb.cases.Simple.checkBeforeAssert:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26675583
+          :relative 1.0470803972480234
+        )
+        :calibrates (2486417 2300584)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26792125
+          :relative 1.0662398623837737
+        )
+        :calibrates (2279834 2320584)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26872750
+          :relative 1.0564423442451953
+        )
+        :calibrates (2431916 2287625)
+      ))
+    :"jpamb.cases.Simple.checkBeforeDivideByN:(I)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26478958
+          :relative 1.0472181682490327
+        )
+        :calibrates (2446334 2303875)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26295458
+          :relative 1.0570449787483003
+        )
+        :calibrates (2305500 2306250)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26642333
+          :relative 1.0506598398434772
+        )
+        :calibrates (2427875 2313916)
+      ))
+    :"jpamb.cases.Simple.checkBeforeDivideByN2:(I)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26344875
+          :relative 1.0449486947307995
+        )
+        :calibrates (2445500 2305417)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26647625
+          :relative 1.0526813658388177
+        )
+        :calibrates (2395750 2324958)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26450209
+          :relative 1.043138641239619
+        )
+        :calibrates (2480959 2308875)
+      ))
+    :"jpamb.cases.Simple.divideByN:(I)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok right-id-non-zero
+            :"divide by zero" right-id-zero
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26248250
+          :relative 1.0372823033361105
+        )
+        :calibrates (2422167 2395625)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok right-id-non-zero
+            :"divide by zero" right-id-zero
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26559583
+          :relative 1.032679791993368
+        )
+        :calibrates (2445333 2481541)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok right-id-non-zero
+            :"divide by zero" right-id-zero
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26490791
+          :relative 1.04631656168366
+        )
+        :calibrates (2446292 2315916)
+      ))
+    :"jpamb.cases.Simple.divideByNMinus10054203:(I)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26505250
+          :relative 1.036933275627574
+        )
+        :calibrates (2407042 2461833)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26234375
+          :relative 1.0340880651646487
+        )
+        :calibrates (2477834 2372958)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26510250
+          :relative 1.043587283482834
+        )
+        :calibrates (2451917 2343833)
+      ))
+    :"jpamb.cases.Simple.divideByZero:()I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -inf
+            :"divide by zero" inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26333416
+          :relative 1.0336219109137292
+        )
+        :calibrates (2412375 2461959)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -inf
+            :"divide by zero" inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26618250
+          :relative 1.0626499034993995
+        )
+        :calibrates (2280833 2327667)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -inf
+            :"divide by zero" inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26460625
+          :relative 1.0332900112897556
+        )
+        :calibrates (2452292 2449333)
+      ))
+    :"jpamb.cases.Simple.divideZeroByZero:(II)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok right-id-non-zero
+            :"divide by zero" right-id-zero
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26668417
+          :relative 1.0486415297968728
+        )
+        :calibrates (2450084 2318459)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok right-id-non-zero
+            :"divide by zero" right-id-zero
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26281125
+          :relative 1.0574718521928896
+        )
+        :calibrates (2297375 2307333)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok right-id-non-zero
+            :"divide by zero" right-id-zero
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26412875
+          :relative 1.0453148184358292
+        )
+        :calibrates (2450833 2308333)
+      ))
+    :"jpamb.cases.Simple.doNothing:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 27095916
+          :relative 1.0544529701752334
+        )
+        :calibrates (2471417 2309166)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26853125
+          :relative 1.0389911916489456
+        )
+        :calibrates (2507125 2402334)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26678458
+          :relative 1.0497397212496966
+        )
+        :calibrates (2449416 2308875)
+      ))
+    :"jpamb.cases.Simple.earlyReturn:()I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26754667
+          :relative 1.0515226811717944
+        )
+        :calibrates (2446542 2305791)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26886292
+          :relative 1.05430940520107
+        )
+        :calibrates (2443459 2301708)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26848750
+          :relative 1.054653161529735
+        )
+        :calibrates (2432000 2302792)
+      ))
+    :"jpamb.cases.Simple.justAdd:(II)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26996875
+          :relative 1.0556880098815957
+        )
+        :calibrates (2443000 2306583)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 27080583
+          :relative 1.055720081415825
+        )
+        :calibrates (2451083 2312875)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26669000
+          :relative 1.050850120615689
+        )
+        :calibrates (2446166 2298292)
+      ))
+    :"jpamb.cases.Simple.justMulitply:(II)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26617542
+          :relative 1.051352228474708
+        )
+        :calibrates (2431666 2298166)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26752791
+          :relative 1.0508491673852585
+        )
+        :calibrates (2449208 2310167)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26664667
+          :relative 1.0447271020539266
+        )
+        :calibrates (2443166 2367875)
+      ))
+    :"jpamb.cases.Simple.justReturn:()I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26521375
+          :relative 1.0452245754258571
+        )
+        :calibrates (2444959 2334750)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26545084
+          :relative 1.0604427261732876
+        )
+        :calibrates (2290083 2329166)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26632125
+          :relative 1.0544264894521969
+        )
+        :calibrates (2377709 2321333)
+      ))
+    :"jpamb.cases.Simple.justReturnNothing:()V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26493417
+          :relative 1.047082210450128
+        )
+        :calibrates (2442000 2312291)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26584083
+          :relative 1.0438001449017567
+        )
+        :calibrates (2418208 2388542)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok inf
+            :"divide by zero" -inf
+            :"assertion error" -inf
+            :"out of bounds" -inf
+            :"null pointer" -inf
+            :* -inf
+          )
+        )
+        :duration (duration
+          :absolute 26578916
+          :relative 1.0365101695270393
+        )
+        :calibrates (2433041 2454125)
+      ))
+    :"jpamb.cases.Simple.multiError:(Z)I" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26196000
+          :relative 1.038895374587295
+        )
+        :calibrates (2441167 2349209)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26294500
+          :relative 1.0412020681760135
+        )
+        :calibrates (2455750 2327167)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26541708
+          :relative 1.0395754528124401
+        )
+        :calibrates (2443541 2402459)
+      ))
+    :"jpamb.cases.Strings.sayHello:(Ljava/lang/String;)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26475292
+          :relative 1.0595343024395196
+        )
+        :calibrates (2302792 2313959)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26117166
+          :relative 1.0531183051347093
+        )
+        :calibrates (2294375 2327708)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 25977833
+          :relative 1.036496585416838
+        )
+        :calibrates (2428584 2348208)
+      ))
+    :"jpamb.cases.Tricky.collatz:(I)V" ((analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26275167
+          :relative 1.0470016842437022
+        )
+        :calibrates (2421958 2294042)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26437750
+          :relative 1.04891784636259
+        )
+        :calibrates (2406625 2317666)
+      ) (analysis-result
+        :response (response
+          :predictions (
+            :ok -0.0
+            :"divide by zero" -0.0
+            :"assertion error" -0.0
+            :"out of bounds" -0.0
+            :"null pointer" -0.0
+            :* -0.0
+          )
+        )
+        :duration (duration
+          :absolute 26453375
+          :relative 1.0497838015119478
+        )
+        :calibrates (2415542 2302125)
+      ))
+  )
+)
