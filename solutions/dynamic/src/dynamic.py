@@ -76,6 +76,15 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             # Hack -- if we create an assertion error, we probably also throw it.
             output = "assertion error"
 
+        case jvm.Ifz(condition=op, target=target):
+            value = frame.stack.pop()
+            assert isinstance(value, jvmc.StackInt), f"expected int, but got {value}"
+
+            if compare(op, value.value, 0):
+                frame.pc %= target
+            else:
+                frame.pc += 1
+
         case a:
             raise NotImplementedError(a.help())
 
