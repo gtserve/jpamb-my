@@ -95,6 +95,16 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             else:
                 frame.pc += 1
 
+        case jvm.Load(type=value_type, index=index):
+            # iload_n
+            if isinstance(value_type, jvm.jvm_type.Int):
+                print(f"LOAD: value_type {value_type}, index {index}", file=sys.stderr)
+                local = frame.locals[index]
+                frame.stack.push(local)
+                frame.pc += 1
+            else:
+                raise NotImplementedError(f"LOAD: Type {value_type} not implemented!")
+
         case a:
             raise NotImplementedError(a.help())
 
