@@ -160,7 +160,7 @@ def fuzz_input(rand: random.Random, methodid: jvm.AbsMethodID) -> jpamb.case.Inp
                 input.append(jpamb.case.Boolean(1 == rand.randint(0, 1)))
             case a:
                 raise NotImplementedError(
-                    "Don't know how to create random values for {input}"
+                    f"Don't know how to create random values for {input}"
                 )
 
     return jpamb.case.Input(input)
@@ -180,20 +180,20 @@ def analyse():
     suite, eff = jpamb.setup()
     bc = jpamb.Bytecode(suite, eff, {})
 
-    MAX_STEPS = 200
+    max_steps = 200
 
     import random
 
     # Make the randomness deterministic
     rand = random.Random(0)
 
-    behaviors = set()
     # Try 10 random inputs
+    behaviors = set()
     for i in range(10):
         input = fuzz_input(rand, methodid)
         state = initial(bc, methodid, input)
 
-        for x in range(MAX_STEPS):
+        for x in range(max_steps):
             _, state = step(bc, state)
             if isinstance(state, str):
                 behaviors.add(state)
