@@ -74,16 +74,25 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
                 frame.stack.push(jvmc.StackInt(value))
                 frame.pc += 1
 
-        case jvm.Return(type=t):
-            if t is not None:
-                raise NotImplementedError("Still to be done")
+        case jvm.Return(type=value_type):
+            # ireturn
+            if isinstance(value_type, jvm.jvm_type.Int):
+                value = frame.stack.pop()
+                state.frames.pop()
+                if state.frames:
+                    raise NotImplementedError("RETURN: Method caller not implemented!")
+                else:
+                    output = "ok"
 
-            state.frames.pop()
+            elif value_type is None:
+                state.frames.pop()
+                if state.frames:
+                    raise NotImplementedError("RETURN: Method caller not implemented!")
+                else:
+                    output = "ok"
 
-            if state.frames:
-                raise NotImplementedError("Still to be done")
             else:
-                output = "ok"
+                raise NotImplementedError(f"RETURN: Type {value_type} not Implemented!")
 
         case jvm.Get(static=True, field=field):
             # Hack - Only handle the assertion case
