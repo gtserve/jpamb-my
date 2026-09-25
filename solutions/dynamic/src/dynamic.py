@@ -8,12 +8,23 @@ import jvm.state as jvmc
 
 def binary(op, v1: int, v2: int) -> int | str:
     match op:
+        case jvm.BinaryOpr.Add:
+            return v1 + v2
+        case jvm.BinaryOpr.Sub:
+            return v1 - v2
+        case jvm.BinaryOpr.Mul:
+            return v1 * v2
         case jvm.BinaryOpr.Div:
             try:
                 return v1 // v2
             except ZeroDivisionError:
                 return "divide by zero"
-        case a:
+        case jvm.BinaryOpr.Rem:
+            try:
+                return v1 - (v1 / v2) * v2
+            except ZeroDivisionError:
+                return "division by zero"
+        case _:
             raise NotImplementedError(f"Unhandled binary {op!r}")
 
 
