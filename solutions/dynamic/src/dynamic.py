@@ -43,7 +43,7 @@ def compare(op, v1: int, v2: int) -> bool:
         case jvm.CmpOpr.Ge:
             return v1 >= v2
         case _:
-            raise NotImplementedError(f"Unhandled comparison {op!r}")
+            raise NotImplementedError(f"COMPARE: Unhandled comparison {op!r}!")
 
 
 def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | str]:
@@ -54,9 +54,10 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
     output = state
     print(f"Stepping {pc}:\n > {opr}", file=sys.stderr)
     match opr:
-        case jvm.Push(type=t, value=v):
-            if t is jvm.Int():
-                frame.stack.push(jvmc.StackInt(v))
+        case jvm.Push(type=value_type, value=value):
+            # iconst_i
+            if value_type is jvm.Int():
+                frame.stack.push(jvmc.StackInt(value))
             else:
                 raise NotImplementedError("Error")
             frame.pc += 1
