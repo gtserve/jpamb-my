@@ -125,6 +125,19 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             else:
                 raise NotImplementedError(f"LOAD: Type {value_type} not implemented!")
 
+        case jvm.If(condition=op, target=target):
+            v2 = frame.stack.pop()
+            v1 = frame.stack.pop()
+
+            # if_icmp<cond>
+            if isinstance(v1, jvmc.StackInt) and isinstance(v2, jvmc.StackInt):
+                if compare(op, v1.value, v2.value):
+                    frame.pc %= target
+                else:
+                    frame.pc += 1
+            else:
+                raise NotImplementedError(f"IF: Either types of v1, v2 not implemented!")
+
         case a:
             raise NotImplementedError(a.help())
 
