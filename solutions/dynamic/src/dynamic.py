@@ -56,11 +56,25 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
     match opr:
         case jvm.Push(type=value_type, value=value):
             # iconst_i
-            if value_type is jvm.Int():
+            if isinstance(value_type, jvm.jvm_type.Int):
                 frame.stack.push(jvmc.StackInt(value))
+                frame.pc += 1
             else:
-                raise NotImplementedError("Error")
-            frame.pc += 1
+                raise NotImplementedError(f"PUSH: Type {value_type} not implemented!")
+
+        case jvm.Load(type=value_type, index=index):
+            local = frame.locals[index]
+
+            if isinstance(value_type, jvm.jvm_type.Int):
+                # iload_n
+                frame.stack.push(local)
+                frame.pc += 1
+            elif isinstance(value_type, jvm.jvm_type.Reference):
+                # aload_<n>
+                frame.stack.push(local)
+                frame.pc += 1
+            else:
+                raise NotImplementedError(f"LOAD: Type {value_type} not implemented!")
 
         case jvm.Binary(type=jvm.Int(), operant=op):
             v2, v1 = frame.stack.pop(), frame.stack.pop()
