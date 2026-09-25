@@ -139,6 +139,10 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             else:
                 raise NotImplementedError(f"IF: Either types of v1, v2 not implemented!")
 
+        case jvm.Goto(target=target):
+            # goto
+            frame.pc %= target
+
         case a:
             raise NotImplementedError(a.help())
 
