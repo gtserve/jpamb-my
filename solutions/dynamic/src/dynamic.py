@@ -76,6 +76,17 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             else:
                 raise NotImplementedError(f"LOAD: Type {value_type} not implemented!")
 
+        case jvm.Store(type=value_type, index=index):
+            assert index <= len(frame.locals.locals) - 1, f"STORE: Index {index} out of range!"
+            value = frame.stack.pop()
+
+            if isinstance(value_type, jvm.jvm_type.Int):
+                # istore_<n>
+                frame.locals[index] = value
+                frame.pc += 1
+            else:
+                raise NotImplementedError(f"STORE: Type {value_type} not implemented!")
+
         case jvm.Binary(type=jvm.Int(), operant=op):
             v2, v1 = frame.stack.pop(), frame.stack.pop()
             assert isinstance(v1, jvmc.StackInt), f"expected int, but got {v1}"
