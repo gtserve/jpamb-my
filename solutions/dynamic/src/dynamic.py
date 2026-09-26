@@ -162,6 +162,27 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             # goto
             frame.pc %= target
 
+        case jvm.Cast(from_=source, to_=target):
+            # i2s
+            value = frame.stack.pop()
+            frame.stack.push(jvmc.StackInt(value.value))
+            frame.pc += 1
+            # assert isinstance(source, jvm.jvm_type.Int), \
+            #     f"CAST: Only Int -> Short supported! Got from: {source}, to: {target}!"
+            # value = frame.stack.pop()
+            # assert isinstance(value, jvmc.StackInt), f"CAST: Expected int value but got {value}!"
+            # new_value = jvmc.StackInt(value.value)
+            # frame.stack.push(new_value)
+
+        # case jvm.NewArray(type=t, dim=size):
+        #     # newarray
+        #     count = frame.stack.pop()
+        #     assert isinstance(count, jvmc.StackInt), f"NEW-ARRAY: Expected count of type Int, but got {type(count)}!"
+        #     stack_ref = state.heap.new(jvmc.HeapArray(
+        #         contains=t,
+        #         values=[]
+        #     ))
+
         case jvm.Incr(index=index, amount=amount):
             # iinc
             value = frame.locals[index]
