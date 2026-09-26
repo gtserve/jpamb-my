@@ -77,7 +77,9 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
                 raise NotImplementedError(f"LOAD: Type {value_type} not implemented!")
 
         case jvm.Store(type=value_type, index=index):
-            assert index <= len(frame.locals.locals) - 1, f"STORE: Index {index} out of range!"
+            assert index <= len(frame.locals.locals) - 1, (
+                f"STORE: Index {index} out of range!"
+            )
             value = frame.stack.pop()
 
             if isinstance(value_type, jvm.jvm_type.Int):
@@ -152,7 +154,7 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
                 else:
                     frame.pc += 1
             else:
-                raise NotImplementedError(f"IF: Either types of v1, v2 not implemented!")
+                raise NotImplementedError("IF: Either types of v1, v2 not implemented!")
 
         case jvm.Goto(target=target):
             # goto
