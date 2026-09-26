@@ -200,9 +200,9 @@ def interpret():
     """The entry point for the interpreter"""
 
     methodid, input, max_steps = jpamb.getcase(
-        "dynamic",
+        "My Dynamic Analyzer",
         "1.0",
-        "The Rice Theorem Cookers",
+        "YTS Group Ltd.",
         ["dynamic", "python"],
         for_science=True,
     )
@@ -243,9 +243,9 @@ def analyse():
     """The dynamic analysis, e.g. in this case a (dumb) fuzzer."""
 
     methodid = jpamb.getmethodid(
-        "dynamic",
+        "My Dynamic Analyzer",
         "1.0",
-        "The Rice Theorem Cookers",
+        "YTS Group Ltd.",
         ["dynamic", "python"],
         for_science=True,
     )
