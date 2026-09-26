@@ -103,12 +103,14 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
                 frame.pc += 1
 
         case jvm.Return(type=value_type):
-            # ireturn
             if isinstance(value_type, jvm.jvm_type.Int):
+                # ireturn
                 value = frame.stack.pop()
                 state.frames.pop()
                 if state.frames:
-                    raise NotImplementedError("RETURN: Method caller not implemented!")
+                    frame = state.frames.peek()
+                    frame.stack.push(value)
+                    frame.pc += 1
                 else:
                     output = "ok"
 
