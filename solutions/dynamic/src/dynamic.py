@@ -162,6 +162,13 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             # goto
             frame.pc %= target
 
+        case jvm.Incr(index=index, amount=amount):
+            # iinc
+            value = frame.locals[index]
+            assert isinstance(value, jvmc.StackInt)
+            value.value += amount
+            frame.pc += 1
+
         case a:
             raise NotImplementedError(a.help())
 
