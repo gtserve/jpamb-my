@@ -1,29 +1,37 @@
 import random
 import sys
+from itertools import product
 
 import jpamb
 import jvm
 import jvm.state as jvmc
 
 
+def int32(value: int) -> int:
+    """Apply the wrapping used by JVM integer operations."""
+    value &= 0xFFFFFFFF
+    return value if value < 0x80000000 else value - 0x100000000
+
+
 def binary(op, v1: int, v2: int) -> int | str:
     match op:
         case jvm.BinaryOpr.Add:
-            return v1 + v2
+            return int32(v1 + v2)
         case jvm.BinaryOpr.Sub:
-            return v1 - v2
+            return int32(v1 - v2)
         case jvm.BinaryOpr.Mul:
-            return v1 * v2
+            return int32(v1 * v2)
         case jvm.BinaryOpr.Div:
-            try:
-                return v1 // v2
-            except ZeroDivisionError:
+            if v2 == 0:
                 return "divide by zero"
+            sign = -1 if (v1 < 0) != (v2 < 0) else 1
+            return int32(abs(v1) // abs(v2) * sign)
         case jvm.BinaryOpr.Rem:
-            try:
-                return v1 - (v1 / v2) * v2
-            except ZeroDivisionError:
-                return "division by zero"
+            if v2 == 0:
+                return "divide by zero"
+            sign = -1 if (v1 < 0) != (v2 < 0) else 1
+            quotient = abs(v1) // abs(v2) * sign
+            return int32(v1 - quotient * v2)
         case _:
             raise NotImplementedError(f"Unhandled binary {op!r}")
 
@@ -46,18 +54,27 @@ def compare(op, v1: int, v2: int) -> bool:
             raise NotImplementedError(f"COMPARE: Unhandled comparison {op!r}!")
 
 
-def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | str]:
+def step(
+    bc: jpamb.Bytecode, state: jvmc.State, *, debug: bool = False
+) -> tuple[jvmc.PC, jvmc.State | str]:
     assert isinstance(state, jvmc.State), f"expected state but got {state}"
     frame = state.frames.peek()
     pc = frame.pc
     opr = bc[pc]
     output = state
-    print(f"Stepping {pc}:\n > {opr}", file=sys.stderr)
+    if debug:
+        print(f"Stepping {pc}:\n > {opr}", file=sys.stderr)
     match opr:
         case jvm.Push(type=value_type, value=value):
             # iconst_i
             if isinstance(value_type, jvm.jvm_type.Int):
                 frame.stack.push(jvmc.StackInt(value))
+                frame.pc += 1
+            elif isinstance(value_type, jvm.jvm_type.Reference):
+                frame.stack.push(jvmc.StackReference(value))
+                frame.pc += 1
+            elif isinstance(value_type, jvm.Object) and isinstance(value, str):
+                frame.stack.push(state.heap.new(jvmc.HeapString(value)))
                 frame.pc += 1
             else:
                 raise NotImplementedError(f"PUSH: Type {value_type} not implemented!")
@@ -82,7 +99,7 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             )
             value = frame.stack.pop()
 
-            if isinstance(value_type, jvm.jvm_type.Int):
+            if isinstance(value_type, (jvm.jvm_type.Int, jvm.jvm_type.Reference)):
                 # istore_<n>
                 frame.locals[index] = value
                 frame.pc += 1
@@ -103,8 +120,7 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
                 frame.pc += 1
 
         case jvm.Return(type=value_type):
-            if isinstance(value_type, jvm.jvm_type.Int):
-                # ireturn
+            if value_type is not None:
                 value = frame.stack.pop()
                 state.frames.pop()
                 if state.frames:
@@ -117,7 +133,7 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             elif value_type is None:
                 state.frames.pop()
                 if state.frames:
-                    raise NotImplementedError("RETURN: Method caller not implemented!")
+                    state.frames.peek().pc += 1
                 else:
                     output = "ok"
 
@@ -132,13 +148,128 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             frame.stack.push(jvmc.StackInt(0))
             frame.pc += 1
 
-        case jvm.New(classname=jvm.ClassName("java.lang.AssertionError")):
-            # Hack -- if we create an assertion error, we probably also throw it.
-            output = "assertion error"
+        case jvm.New(classname=classname):
+            frame.stack.push(state.heap.new(jvmc.HeapObject(classname, {})))
+            frame.pc += 1
+
+        case jvm.Dup(words=1):
+            value = frame.stack.pop()
+            frame.stack.push(value)
+            frame.stack.push(value)
+            frame.pc += 1
+
+        case jvm.NewArray(type=value_type, dim=1):
+            count = frame.stack.pop()
+            assert isinstance(count, jvmc.StackInt)
+            if count.value < 0:
+                output = "out of bounds"
+            else:
+                ref = state.heap.new(jvmc.HeapArray(value_type, [0] * count.value))
+                frame.stack.push(ref)
+                frame.pc += 1
+
+        case jvm.ArrayStore():
+            value = frame.stack.pop()
+            index = frame.stack.pop()
+            reference = frame.stack.pop()
+            assert isinstance(value, jvmc.StackInt)
+            assert isinstance(index, jvmc.StackInt)
+            assert isinstance(reference, jvmc.StackReference)
+            if reference.value == 0:
+                output = "null pointer"
+            else:
+                array = state.heap[reference]
+                assert isinstance(array, jvmc.HeapArray)
+                if index.value < 0 or index.value >= len(array.values):
+                    output = "out of bounds"
+                else:
+                    array.values[index.value] = value.value
+                    frame.pc += 1
+
+        case jvm.ArrayLoad():
+            index = frame.stack.pop()
+            reference = frame.stack.pop()
+            assert isinstance(index, jvmc.StackInt)
+            assert isinstance(reference, jvmc.StackReference)
+            if reference.value == 0:
+                output = "null pointer"
+            else:
+                array = state.heap[reference]
+                assert isinstance(array, jvmc.HeapArray)
+                if index.value < 0 or index.value >= len(array.values):
+                    output = "out of bounds"
+                else:
+                    frame.stack.push(jvmc.StackInt(array.values[index.value]))
+                    frame.pc += 1
+
+        case jvm.ArrayLength():
+            reference = frame.stack.pop()
+            assert isinstance(reference, jvmc.StackReference)
+            if reference.value == 0:
+                output = "null pointer"
+            else:
+                array = state.heap[reference]
+                assert isinstance(array, jvmc.HeapArray)
+                frame.stack.push(jvmc.StackInt(len(array.values)))
+                frame.pc += 1
+
+        case jvm.InvokeStatic(method=methodid):
+            called = bc.getmethod(methodid)
+            called_frame = jvmc.Frame.from_method(called)
+            arguments = [frame.stack.pop() for _ in methodid.extension.params]
+            for index, value in enumerate(reversed(arguments)):
+                called_frame.locals[index] = value
+            state.frames.push(called_frame)
+
+        case jvm.InvokeVirtual(method=methodid):
+            arguments = [frame.stack.pop() for _ in methodid.extension.params]
+            receiver = frame.stack.pop()
+            assert isinstance(receiver, jvmc.StackReference)
+            if receiver.value == 0:
+                output = "null pointer"
+            elif methodid.extension.name == "equals" and len(arguments) == 1:
+                argument = arguments[0]
+                left = state.heap[receiver]
+                right = (
+                    state.heap[argument]
+                    if isinstance(argument, jvmc.StackReference) and argument.value
+                    else None
+                )
+                equal = (
+                    isinstance(left, jvmc.HeapString)
+                    and isinstance(right, jvmc.HeapString)
+                    and left.content == right.content
+                )
+                frame.stack.push(jvmc.StackInt(1 if equal else 0))
+                frame.pc += 1
+            else:
+                raise NotImplementedError(f"INVOKE VIRTUAL: {methodid}")
+
+        case jvm.InvokeSpecial(method=methodid):
+            for _ in methodid.extension.params:
+                frame.stack.pop()
+            frame.stack.pop()
+            frame.pc += 1
+
+        case jvm.Throw():
+            reference = frame.stack.pop()
+            assert isinstance(reference, jvmc.StackReference)
+            if reference.value == 0:
+                output = "null pointer"
+            else:
+                thrown = state.heap[reference]
+                if isinstance(
+                    thrown, jvmc.HeapObject
+                ) and thrown.classname == jvm.ClassName("java.lang.AssertionError"):
+                    output = "assertion error"
+                else:
+                    raise NotImplementedError(f"THROW: {thrown}")
 
         case jvm.Ifz(condition=op, target=target):
             value = frame.stack.pop()
-            assert isinstance(value, jvmc.StackInt), f"expected int, but got {value}"
+            assert isinstance(value, (jvmc.StackInt, jvmc.StackReference)), (
+                f"expected int or reference, but got {value}"
+            )
 
             if compare(op, value.value, 0):
                 frame.pc %= target
@@ -150,7 +281,9 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             v1 = frame.stack.pop()
 
             # if_icmp<cond>
-            if isinstance(v1, jvmc.StackInt) and isinstance(v2, jvmc.StackInt):
+            if isinstance(v1, type(v2)) and isinstance(
+                v1, (jvmc.StackInt, jvmc.StackReference)
+            ):
                 if compare(op, v1.value, v2.value):
                     frame.pc %= target
                 else:
@@ -163,31 +296,27 @@ def step(bc: jpamb.Bytecode, state: jvmc.State) -> tuple[jvmc.PC, jvmc.State | s
             frame.pc %= target
 
         case jvm.Cast(from_=source, to_=target):
-            # i2s
             value = frame.stack.pop()
-            frame.stack.push(jvmc.StackInt(value.value))
+            assert isinstance(value, jvmc.StackInt)
+            if isinstance(source, jvm.Int) and isinstance(target, jvm.Short):
+                short = value.value & 0xFFFF
+                signed = short if short < 0x8000 else short - 0x10000
+                frame.stack.push(jvmc.StackInt(signed))
+            else:
+                raise NotImplementedError(f"CAST: {source} -> {target}")
             frame.pc += 1
-            # assert isinstance(source, jvm.jvm_type.Int), \
-            #     f"CAST: Only Int -> Short supported! Got from: {source}, to: {target}!"
-            # value = frame.stack.pop()
-            # assert isinstance(value, jvmc.StackInt), f"CAST: Expected int value but got {value}!"
-            # new_value = jvmc.StackInt(value.value)
-            # frame.stack.push(new_value)
 
-        # case jvm.NewArray(type=t, dim=size):
-        #     # newarray
-        #     count = frame.stack.pop()
-        #     assert isinstance(count, jvmc.StackInt), f"NEW-ARRAY: Expected count of type Int, but got {type(count)}!"
-        #     stack_ref = state.heap.new(jvmc.HeapArray(
-        #         contains=t,
-        #         values=[]
-        #     ))
+        case jvm.Negate(type=jvm.Int()):
+            value = frame.stack.pop()
+            assert isinstance(value, jvmc.StackInt)
+            frame.stack.push(jvmc.StackInt(int32(-value.value)))
+            frame.pc += 1
 
         case jvm.Incr(index=index, amount=amount):
             # iinc
             value = frame.locals[index]
             assert isinstance(value, jvmc.StackInt)
-            value.value += amount
+            frame.locals[index] = jvmc.StackInt(int32(value.value + amount))
             frame.pc += 1
 
         case a:
@@ -247,28 +376,85 @@ def interpret():
     last = jpamb.emit_init(state)
 
     for x in range(max_steps):
-        pc, state = step(bc, state)
+        pc, state = step(bc, state, debug=True)
         last = jpamb.emit_step(last, pc, state)
 
         if isinstance(state, str):
             break
 
 
-def fuzz_input(rand: random.Random, methodid: jvm.AbsMethodID) -> jpamb.case.Input:
-    input = []
-    # 1. come up with possible inputs
-    for p in methodid.extension.params:
-        match p:
-            case jvm.Int():
-                input.append(jpamb.case.Int(rand.randint(-(1 << 31), 1 << 31)))
-            case jvm.Boolean():
-                input.append(jpamb.case.Boolean(1 == rand.randint(0, 1)))
-            case a:
-                raise NotImplementedError(
-                    f"Don't know how to create random values for {input}"
-                )
+def fuzz_inputs(
+    rand: random.Random, bc: jpamb.Bytecode, methodid: jvm.AbsMethodID
+) -> list[jpamb.case.Input]:
+    constants = {
+        op.value
+        for op in bc.getmethod(methodid).opcodes
+        if isinstance(op, jvm.Push) and isinstance(op.value, int)
+    }
+    integers = set(range(-16, 17))
+    integers.update((32, 100, 1_024))
+    for value in constants:
+        integers.update((int32(value - 1), int32(value), int32(value + 1)))
+    integers.update(rand.randint(-100, 100) for _ in range(8))
 
-    return jpamb.case.Input(input)
+    choices = []
+    for parameter in methodid.extension.params:
+        match parameter:
+            case jvm.Int():
+                choices.append([jpamb.case.Int(value) for value in sorted(integers)])
+            case jvm.Boolean():
+                choices.append([jpamb.case.Boolean(False), jpamb.case.Boolean(True)])
+            case jvm.Array(contains=jvm.Int()):
+                choices.append(
+                    [
+                        jpamb.case.Array(jvm.Int(), values)
+                        for values in (
+                            (),
+                            (0,),
+                            (1,),
+                            (-1,),
+                            (100, 101, 102),
+                            (2, 3, 4, 10, 40),
+                        )
+                    ]
+                )
+            case jvm.Array(contains=jvm.Char()):
+                choices.append(
+                    [
+                        jpamb.case.Array(jvm.Char(), tuple(value))
+                        for value in ("", "a", "hello", "world")
+                    ]
+                )
+            case jvm.Object(name=jvm.ClassName("java.lang.String")):
+                choices.append(
+                    [jpamb.case.String(value) for value in ("", "hello", "world")]
+                )
+            case unsupported:
+                raise NotImplementedError(f"Cannot fuzz parameter {unsupported}")
+
+    if not choices:
+        return [jpamb.case.Input([])]
+
+    combinations = list(product(*choices))
+    rand.shuffle(combinations)
+
+    # Always include simple aligned inputs before sampling the Cartesian product.
+    # This preserves useful pairs such as (0, 0) even when there are many choices.
+    seeds = []
+    for index in range(min(len(values) for values in choices)):
+        seeds.append(tuple(values[index] for values in choices))
+
+    candidates = []
+    seen = set()
+    for values in seeds + combinations:
+        input = jpamb.case.Input(list(values))
+        key = input.encode()
+        if key not in seen:
+            seen.add(key)
+            candidates.append(input)
+        if len(candidates) == 100:
+            break
+    return candidates
 
 
 def analyse():
@@ -285,21 +471,27 @@ def analyse():
     suite, eff = jpamb.setup()
     bc = jpamb.Bytecode(suite, eff, {})
 
-    max_steps = 200
-
-    import random
+    max_steps = 2_000
 
     # Make the randomness deterministic
     rand = random.Random(0)
 
-    # Try 10 random inputs
     behaviors = set()
-    for i in range(10):
-        input = fuzz_input(rand, methodid)
+    for input in fuzz_inputs(rand, bc, methodid):
         state = initial(bc, methodid, input)
+        seen = set()
 
-        for x in range(max_steps):
-            _, state = step(bc, state)
+        for _ in range(max_steps):
+            signature = repr(state)
+            if signature in seen:
+                behaviors.add("*")
+                break
+            seen.add(signature)
+
+            try:
+                _, state = step(bc, state)
+            except (AssertionError, IndexError, NotImplementedError):
+                break
             if isinstance(state, str):
                 behaviors.add(state)
                 break
