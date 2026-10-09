@@ -196,55 +196,76 @@ class SignSet(Abstraction, Lattice):
     def arithmetic(
         self, other: "SignSet", opr: jvm.BinaryOpr
     ) -> tuple["SignSet", set[str]]:
-        match opr:
-            case jvm.BinaryOpr.Add:
-                output = set()
-                if 1 in self.signs:
-                    output.add(1)
-                    if -1 in other.signs:
-                        output.update([0, -1])
+        output: set[Sign] = set()
+        errors: set[str] = set()
 
-                if -1 in self.signs:
-                    output.add(-1)
-                    if 1 in other.signs:
-                        output.update([0, 1])
+        for left in self.signs:
+            for right in other.signs:
+                match opr:
+                    case jvm.BinaryOpr.Add:
+                        if left == 0:
+                            output.add(right)
+                        elif right == 0 or left == right:
+                            output.add(left)
+                        else:
+                            output.update((-1, 0, 1))
+                    case jvm.BinaryOpr.Sub:
+                        if right == 0:
+                            output.add(left)
+                        elif left == 0:
+                            output.add(-right)
+                        elif left != right:
+                            output.add(left)
+                        else:
+                            output.update((-1, 0, 1))
+                    case jvm.BinaryOpr.Mul:
+                        output.add(0 if left == 0 or right == 0 else left * right)
+                    case jvm.BinaryOpr.Div:
+                        if right == 0:
+                            errors.add("divide by zero")
+                        elif left == 0:
+                            output.add(0)
+                        else:
+                            # Integer division can truncate a non-zero result to zero.
+                            output.update((0, left * right))
+                    case jvm.BinaryOpr.Rem:
+                        if right == 0:
+                            errors.add("divide by zero")
+                        elif left == 0:
+                            output.add(0)
+                        else:
+                            # A Java remainder is zero or has the dividend's sign.
+                            output.update((0, left))
 
-                if 0 in self.signs:
-                    output.update(other.signs)
-
-                return (SignSet(output), set())
-            case jvm.BinaryOpr.Sub:
-                output = set()
-                if 1 in self.signs:
-                    output.add(1)
-                    if 1 in other.signs:
-                        output.update([0, -1])
-                    # If 
-
-                if -1 in self.signs:
-                    output.add(-1)
-                    if 
-
-
-            case _:
-                raise NotImplementedError(f"TODO: {opr}")
+        return SignSet(frozenset(output)), errors
 
     def compare(self, other: "SignSet", opr: jvm.CmpOpr) -> Iterable[bool]:
-        match opr:
-            case jvm.CmpOpr.Le:
-                cases = set()
-                for x in self.signs:
-                    for y in other.signs:
-                        if x == 0 or y == 0:
-                            cases.add(x <= y)
-                            continue
-                        if x <= y:
-                            cases.add(True)
-                        if x >= y:
-                            cases.add(False)
-                return cases
-            case _:
-                raise NotImplementedError(f"TODO: {opr}")
+        representatives = {
+            -1: (-2, -1),
+            0: (0,),
+            1: (1, 2),
+        }
+        cases: set[bool] = set()
+
+        for left_sign in self.signs:
+            for right_sign in other.signs:
+                for left in representatives[left_sign]:
+                    for right in representatives[right_sign]:
+                        match opr:
+                            case jvm.CmpOpr.Ne:
+                                cases.add(left != right)
+                            case jvm.CmpOpr.Eq:
+                                cases.add(left == right)
+                            case jvm.CmpOpr.Lt:
+                                cases.add(left < right)
+                            case jvm.CmpOpr.Le:
+                                cases.add(left <= right)
+                            case jvm.CmpOpr.Ge:
+                                cases.add(left >= right)
+                            case jvm.CmpOpr.Gt:
+                                cases.add(left > right)
+
+        return cases
 
 
 from collections.abc import Iterable

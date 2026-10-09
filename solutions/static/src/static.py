@@ -33,6 +33,25 @@ class State(sexpr.AsSExpr):
             tuple(s1 | s2 for s1, s2 in zip(self.stack, other.stack)),
         )
 
+    def __and__(self, other):
+        assert isinstance(other, State), f"Expected State but got {other!r}"
+        assert len(self.stack) == len(other.stack), "Stacks should be equal length"
+        assert len(self.locals) == len(other.locals), "Locals should be equal length"
+
+        return State(
+            tuple(s1 & s2 for s1, s2 in zip(self.locals, other.locals)),
+            tuple(s1 & s2 for s1, s2 in zip(self.stack, other.stack)),
+        )
+
+    def __le__(self, other):
+        if not isinstance(other, State):
+            return NotImplemented
+        if len(self.stack) != len(other.stack) or len(self.locals) != len(other.locals):
+            return False
+        return all(a <= b for a, b in zip(self.locals, other.locals)) and all(
+            a <= b for a, b in zip(self.stack, other.stack)
+        )
+
     def push(self, value: SignSet):
         assert isinstance(value, SignSet), f"Expected sign set but got {value}"
         return State(self.locals, self.stack + (value,))
@@ -44,10 +63,19 @@ class State(sexpr.AsSExpr):
         return self.locals[index]
 
     def store(self, index, value):
+        assert isinstance(value, SignSet), f"Expected sign set but got {value}"
         return State(
             tuple(self.locals[:index]) + (value,) + tuple(self.locals[index + 1 :]),
             self.stack,
         )
+
+
+ZERO = SignSet.from_sign("0")
+NON_NULL = SignSet.from_sign("+")
+
+
+def constant(value: int) -> SignSet:
+    return SignSet.abstract([StackInt(value)])
 
 
 def manystep(
@@ -57,19 +85,28 @@ def manystep(
 ) -> Iterable[tuple[PC, object] | str]:
     opr = bc[pc]
     match opr:
+        case jvm.Push(type=jvm.Int(), value=value):
+            assert isinstance(value, int)
+            yield (pc + 1, state.push(constant(value)))
+
+        case jvm.Push(type=jvm.Reference(), value=0):
+            yield (pc + 1, state.push(ZERO))
+
+        case jvm.Push():
+            # Object constants (notably strings) are non-null references.
+            yield (pc + 1, state.push(NON_NULL))
+
         case jvm.Get(static=True, field=field):
             # Hack - Only handle the assertion case
             assert field.extension.name == "$assertionsDisabled"
 
             # Hack - Assuming assertions are never disabled
-            va = SignSet.abstract([StackInt(0)])
-
-            yield (pc + 1, state.push(va))
+            yield (pc + 1, state.push(ZERO))
 
         case jvm.Ifz(condition=op, target=target):
             [val], after = state.pop(1)
 
-            for res in SignSet.compare(val, SignSet.abstract([StackInt(0)]), op):
+            for res in val.compare(ZERO, op):
                 match res:
                     case True:
                         yield (pc % target, after)
@@ -82,16 +119,45 @@ def manystep(
             va = state.load(i)
             yield (pc + 1, state.push(va))
 
+        case jvm.Store(index=i):
+            [value], after = state.pop(1)
+            yield (pc + 1, after.store(i, value))
+
+        case jvm.If(condition=op, target=target):
+            [left, right], after = state.pop(2)
+            for result in left.compare(right, op):
+                yield (pc % target if result else pc + 1, after)
+
         case jvm.Goto(target=t):
             yield (pc % t, state)
 
         case jvm.Binary(operant=op):
-            [v1, v2], after = state.pop(2)
-            for res in SignSet.arithmetic(v1, v2, op):
-                if isinstance(res, str):
-                    yield res
-                else:
-                    yield (pc + 1, after.push(res))
+            [left, right], after = state.pop(2)
+            value, errors = left.arithmetic(right, op)
+            if value != SignSet.bot():
+                yield (pc + 1, after.push(value))
+            yield from errors
+
+        case jvm.Negate():
+            [value], after = state.pop(1)
+            negated = SignSet(frozenset(-sign for sign in value.signs))
+            yield (pc + 1, after.push(negated))
+
+        case jvm.Incr(index=index, amount=amount):
+            value = state.load(index)
+            incremented, errors = value.arithmetic(constant(amount), jvm.BinaryOpr.Add)
+            assert not errors
+            yield (pc + 1, state.store(index, incremented))
+
+        case jvm.Cast():
+            [value], after = state.pop(1)
+            # Narrowing casts can change a non-zero integer's sign through overflow.
+            casted = value if value <= ZERO else SignSet.top()
+            yield (pc + 1, after.push(casted))
+
+        case jvm.Dup(words=1):
+            [value], _ = state.pop(1)
+            yield (pc + 1, state.push(value))
 
         case jvm.Return(type=None):
             yield "ok"
@@ -104,6 +170,15 @@ def manystep(
             # Hack -- if we create an assertion error, we probably also throw it.
             yield "assertion error"
 
+        case jvm.New():
+            yield (pc + 1, state.push(NON_NULL))
+
+        case jvm.Throw():
+            yield "assertion error"
+
+        case unsupported:
+            raise NotImplementedError(unsupported.help())
+
 
 def initialstate(
     bc: jpamb.Bytecode,
@@ -115,7 +190,13 @@ def initialstate(
 
     if inputs is None:
         for i, p in enumerate(methodid.extension.params):
-            locals[i] = SignSet.top()
+            match p:
+                case jvm.Boolean():
+                    locals[i] = SignSet.from_sign("0+")
+                case jvm.Int():
+                    locals[i] = SignSet.top()
+                case _:
+                    locals[i] = SignSet.from_sign("0+")
     else:
         for i, x in enumerate(inputs.values):
             match x:
@@ -124,7 +205,9 @@ def initialstate(
                 case jpamb.case.Int(value=value):
                     locals[i] = SignSet.abstract([StackInt(int(value))])
                 case jpamb.case.Array():
-                    locals[i] = SignSet.from_sign("+")
+                    locals[i] = NON_NULL
+                case jpamb.case.String():
+                    locals[i] = NON_NULL
                 case _:
                     raise NotImplementedError(f"Unsupported value {x!r}")
 
@@ -166,6 +249,9 @@ class AbstractInterpreter:
                 if before is None or after != before:
                     self.states[pc_] = after
                     self.worklist.append(pc_)
+
+                if pc_.method == pc.method and pc_.offset <= pc.offset:
+                    finals.add("*")
 
         return pc, finals
 
@@ -212,16 +298,24 @@ def analyse():
 
     steps = 300
 
-    ai = AbstractInterpreter.initial(bc, methodid, None)
-
     final = set()
-    while steps > 0 and ai.worklist:
-        _pc, finals = ai.step()
-        final |= finals
-        steps -= 1
+    incomplete = False
+    try:
+        ai = AbstractInterpreter.initial(bc, methodid, None)
+        while steps > 0 and ai.worklist:
+            _pc, finals = ai.step()
+            final |= finals
+            steps -= 1
+        incomplete = bool(ai.worklist)
+    except (AssertionError, IndexError, NotImplementedError) as error:
+        print(f"Incomplete analysis: {error}", file=sys.stderr)
+        incomplete = True
 
-    for f in jpamb.QUERIES:
-        if f not in final:
-            print(f"{f};no")
+    for outcome in jpamb.QUERIES:
+        if incomplete:
+            prediction = "unknown"
+        elif outcome in final:
+            prediction = "possible"
         else:
-            print(f"{f};maybe")
+            prediction = "impossible"
+        print(f"{outcome};{prediction}")
