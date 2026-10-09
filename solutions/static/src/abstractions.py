@@ -178,7 +178,7 @@ class SignSet(Abstraction, Lattice):
         return to_sign(value) in self.signs
 
     @classmethod
-    def top(cls) -> bool:
+    def top(cls) -> "SignSet":
         return cls(frozenset([-1, 0, 1]))
 
     def __or__(self, other: "SignSet") -> "SignSet":
@@ -213,6 +213,19 @@ class SignSet(Abstraction, Lattice):
                     output.update(other.signs)
 
                 return (SignSet(output), set())
+            case jvm.BinaryOpr.Sub:
+                output = set()
+                if 1 in self.signs:
+                    output.add(1)
+                    if 1 in other.signs:
+                        output.update([0, -1])
+                    # If 
+
+                if -1 in self.signs:
+                    output.add(-1)
+                    if 
+
+
             case _:
                 raise NotImplementedError(f"TODO: {opr}")
 

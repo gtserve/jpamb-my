@@ -175,7 +175,7 @@ def interpret():
     methodid, input, steps = jpamb.getcase(
         "static",
         "1.0",
-        "The Rice Theorem Cookers",
+        "YTS Group Ltd.",
         ["static", "python"],
         for_science=True,
     )
@@ -202,7 +202,7 @@ def analyse():
     methodid = jpamb.getmethodid(
         "static",
         "1.0",
-        "The Rice Theorem Cookers",
+        "YTS Group Ltd.",
         ["static", "python"],
         for_science=True,
     )
